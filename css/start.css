@@ -1,0 +1,101 @@
+#start .wrapper{
+  margin: 50px 0 0 60px;
+  background: url(../content/img/start/world.png) no-repeat;
+  width: 805px;
+  height: 500px;
+  position: relative;
+}
+#start .wrapper > div{
+  font: 20px/50px MetaPlusNormalRoman;
+  white-space: nowrap;
+  position: absolute;
+  top: 87px;
+}
+#start .wrapper > div strong{
+  font: 66px MetaPlusMediumRoman;
+}
+#start .wrapper > div strong sup{
+  font-family: MetaPlusNormalRoman;
+}
+#start .wrapper .circled-text{
+  right: 162px;
+  top: auto;
+  bottom: 160px;
+  opacity: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+
+}
+#start .wrapper .green{
+  -webkit-box-align: end;
+}
+#start .wrapper .circled-text p{
+  font: 20px MetaPlusNormalRoman;
+  color: black;
+  margin: 0 0 5px 0;
+}
+#start .wrapper .circled-text p:first-child{
+  font: 24px MetaPlusMediumRoman;
+  color: #aba942;
+  padding-right: 5px;
+  margin: 0;
+}
+#start .wrapper .circled-text p:nth-child(2){
+  font: 30px MetaPlusBoldRoman;
+  background: url(../content/img/start/rounds.png) no-repeat;
+  background-size: 294px 160px;
+  width: 122px;
+  height: 120px;
+  -webkit-box-sizing: border-box;
+  padding: 43px 0 0 3px;
+  margin: 0;
+}
+#start .wrapper .red{
+  left: 658px;
+  right: auto;
+}
+#start .wrapper .red p{
+  text-align: left;
+}
+#start .wrapper .red p:first-child{
+  color: #d94d4c;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  -webkit-transform: translate3d(0,0,0);
+}
+#start .wrapper .red p:nth-child(2){
+  background-position: right top;
+  background-size: 294px 167px;
+  width: 165px;
+  height: 167px;
+  padding: 56px 0 0 53px;
+  font-size: 46px;
+  -webkit-transform: scale(0.72) translate3d(0,0,0);
+  -webkit-transform-origin: 0 100%;
+}
+#start aside{
+  font: 16px metaplusnormalroman;
+  position: absolute;
+  left: 55px;
+  bottom: 50px;
+  color: #666;
+}
+/*-------------- animation ----------------*/
+#start.step-1 .wrapper .green{
+  -webkit-transition: opacity .5s;
+  opacity: 1;
+}
+#start.step-2 .wrapper .red{
+  -webkit-transition: opacity .5s;
+  opacity: 1;
+}
+#start.step-2 .wrapper .red p:nth-of-type(2){
+  -webkit-transition: all 2.5s .5s linear;
+  -webkit-transform: scale(1);
+}
+#start.step-2 .wrapper .red p:first-child{
+  -webkit-transition: top 1s .5s;
+  top: -25px;
+}
+

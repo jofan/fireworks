@@ -1,0 +1,131 @@
+#menu{
+	width: 100%;
+	height: 43px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	background-image: -webkit-linear-gradient(bottom, #dedede 0%, #f2f3f2 100%);
+	z-index: 100;
+	-webkit-box-shadow: 4px 0 12px 0 rgba(0, 0, 0, .16);
+	border-bottom: 1px solid #cecece;
+}
+#menu::after{
+	content: '';
+	display: block;
+	background: url(logo.png) 0 64% no-repeat;
+	width: 112px;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#menu .menu-wrapper{
+	overflow: hidden;
+	width: 900px;
+	height: inherit;
+}
+#menu .scroll-wrapper{
+	white-space: nowrap;
+	float: left;
+	width: 1085px;
+	height: inherit;
+	-webkit-box-sizing: border-box;
+	height: 43px;
+}
+#menu ul{
+	height: inherit;
+	float: left;
+	-webkit-box-sizing: border-box;
+}
+#menu li{
+	position: relative;
+	float: left;
+}
+#menu li::before,
+#menu .chapters li:last-child::after{
+	content: '';
+	display: block;
+	background: #fff;
+	width: 1px;
+	height: 27px;
+	border-left: 1px solid #cccccc;
+	position: absolute;
+	top: 8px;
+	left: -2px;
+}
+#menu .chapters li:last-child::after{
+	left: auto;
+	right: 0;
+}
+#menu .controls li{
+	background: url(icon.png) 4px 12px no-repeat;
+	background-size: 102px 82px;
+	display: block;
+	width: 64px;
+	height: inherit;
+	padding: 0;
+	margin: 0;
+}
+#menu .controls .builder{
+	background-position-x: -41px;
+}
+#menu .controls .builder.active,
+#menu .controls .home.active{
+	background-position-y: -38px;
+}
+#menu .controls li.like-chapter,
+#menu .chapters li{
+	background: transparent;
+	font: 16px MetaPlusNormalRoman;
+	color: #333333;
+	padding: 0 26px;
+	text-shadow: 0 -1px rgba(0, 0, 0, .32);
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	text-align: center;
+	height: inherit;
+}
+#menu .controls li.like-chapter.active,
+#menu .chapters li.active{
+	background-image: -webkit-linear-gradient(bottom, #47b1e8 0%, #71cbf9 100%);
+	color: #fff;
+	text-shadow: 0 -1px #258abf;
+	-webkit-box-shadow: inset 3px -1px 6px rgba(0, 0, 0, .2);
+}
+#menu .controls li.like-chapter.active::before,
+#menu .chapters li.active::before{
+	content: '';
+	display: block;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0 9px 9px 9px;
+	border-color: transparent transparent #dedede transparent;
+	position: absolute;
+	top: auto;
+	bottom: 0;
+	left: 42%;
+	pointer-events: none;
+	background: none;
+}
+#menu .chapters.hide,
+#menu .controls li.active + li::before,
+#menu .controls li.active::after,
+#menu .chapters li.active + li::before,
+#menu .chapters li.active::after,
+#menu.hide{
+	display: none;
+}
+#menu li.inactive{
+	pointer-events: none;
+}
+#menu .full-presentation-open{
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 139px;
+	height: 44px;
+	z-index: 10;
+}

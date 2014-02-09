@@ -1,0 +1,13 @@
+{
+	"slides": {
+		"start": {
+			"id": "start",
+			"name": "21st Century Epidemic",
+			"files": {
+				"templates": ["slides/templates/start.html"],
+				"scripts": ["slides/start.js"],
+				"styles": ["css/start.css"]
+			}
+		}
+	}
+}

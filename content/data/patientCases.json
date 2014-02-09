@@ -1,0 +1,51 @@
+{
+	"specificCase":{
+		"1":{
+			"age":32,
+			"gender":"Female",
+			"sick":"Yes",
+			"diagnosed":"Recently",
+			"medical_history":["Pregnancy"],
+			"symptoms":["Weight gain", "Unrest"]
+		},
+		"2":{
+			"age":48,
+			"gender":"Male",
+			"sick":"No",
+			"diagnosed":"3-10 years",
+			"medical_history":[],
+			"symptoms":["Stress"]
+		},
+		"3":{
+			"age":75,
+			"gender":"Female",
+			"sick":"No",
+			"diagnosed":"10-20 years",
+			"medical_history":["Heart Failure"],
+			"symptoms":["Skin irritations"]
+		},
+		"4":{
+			"age":78,
+			"gender":"Male",
+			"sick":"No",
+			"diagnosed":"3-10 years",
+			"medical_history":["Liver Failure", "Alcoholism"],
+			"symptoms":["Skin irritations", "Fatigue", "Unrest"]
+		}
+	},
+	"customCase":{
+		"1":{
+			"gender":"Female"
+		},
+		"2":{
+			"gender":"Male"
+		}
+	},
+	"contraindications":{
+		"Heart Failure":["Intraviptin", "Paraciptin"],
+		"Kidney Failure":["Mediogliptin", "Subcutanin"],
+		"Liver Failure":["Intraviptin", "Mediogliptin", "Subcutanin"],
+		"Pregnancy":["Intraviptin", "Mediogliptin", "Paraciptin", "Subcutanin"],
+		"Alcoholism":["Mediogliptin", "Paraciptin"]
+	}
+}

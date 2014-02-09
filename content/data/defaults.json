@@ -1,0 +1,28 @@
+{
+	"forAllFlows":{
+		"diabetes":{
+			"diabetes":6.7,
+			"undiagnosed":38.6
+		},
+		"problems":{
+			"patients_today":42,
+			"patients_2030":78,
+			"patients_undiagnosed":26
+		},
+		"costs":{
+			"budget_reduction":43000,
+			"patients_remepan":10
+		},
+		"treatment_of_choice":"intraviptin",
+		"treatment_of_choice_index":0,
+		"goToPatientCase": {
+			"type": "specificCase",
+			"num": 1
+		}
+	},
+	"3":{
+		"treatment_of_choice":"remepan",
+		"treatment_of_choice_index":4
+	}
+
+}

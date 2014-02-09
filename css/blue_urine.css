@@ -1,0 +1,85 @@
+#blue_urine .cont-range {
+	width:820px;
+	height: 400px;
+	position: absolute;
+	top: 174px;
+	left: 93px;
+	padding: 10px;
+}
+#blue_urine .percentage-number {
+	position: relative;
+	bottom: 0;
+	right: 0;
+	width: 390px;
+	height: 120px;
+	float: right;
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	color: #A5C646;
+	font-size:80px;
+}
+#scroll_bar {
+	margin-top:50px;
+	margin-left:65px;
+	width: 20px;
+	height: 400px;
+	border: 1px solid #CCC;
+	float: left;
+	-webkit-box-shadow: inset 2px 1px 4px 1px #ccc;
+	-webkit-transform: translate3d(0,0,0);
+	-webkit-border-radius: 15px;
+}
+#blue_urine .cont-range div {
+	background: url("assets/man.png") no-repeat 0 0;
+	width: 40px;
+	height: 62px;
+	float: left;
+	margin-bottom: 5px;
+}
+#blue_urine .cont-range div.active {
+	background-position: 0 -68px;
+}
+#blue_urine .cont-range div.blue {
+	background-position: 0 -138px;
+}
+
+#scroll_bar #handle {
+	display: block;
+	background: url("assets/slider.png") no-repeat -3px center;
+	width: 30px;
+	height: 106px;
+}
+#blue_urine .urine-text {
+	color: #5A5A5A;
+	font-size: 12px;
+	width: 190px;
+	position: absolute;
+	left: 522px;
+	top: 443px;
+	display: none;
+}
+
+#blue_urine .blue {
+	color:#2ca0da;
+}
+@media all and (orientation:portrait) {
+	#blue_urine .cont-range {
+		width: 438px;
+		height: 670px;
+		top: 150px;
+		left: 70px;
+	}
+	#scroll_bar {
+		margin-top: 166px;
+		margin-left: 48px;
+	}
+	#blue_urine .percentage-number {
+		position: absolute;
+		left: 348px;
+		top: 185px;
+	}
+	#blue_urine .urine-text {
+		display: block;
+	}
+}
