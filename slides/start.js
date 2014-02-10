@@ -41,11 +41,13 @@ angular.module('fireworks').directive("epidemicGraph", function() {
         clearInterval(countUpInterval);
       }
       
-      el.on('enter:start', function() {
+      scope.$on('enter:start', function() {
+        console.log(':: Entering start');
         onEnter();
       });
       
-      el.on('exit:start', function() {
+      scope.$on('exit:start', function() {
+        console.log(':: Exiting start');
         onExit();
       })
       

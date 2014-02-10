@@ -9,5 +9,18 @@
 				"styles": ["css/start.css"]
 			}
 		}
-	}
+	},
+	"structures": {
+		"remepan": {
+			"id": "remepan",
+			"name": "Remepan presentation",
+			"content": ["start", "intro", "blue_urine", "heads-up"]
+		},
+		"intro": {
+			"id": "intro",
+			"name": "Presentation introduction",
+			"content": ["intro", "heads-up"]
+		}
+	},
+	"storyboard": ["remepan"]
 }

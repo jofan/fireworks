@@ -8,10 +8,13 @@ fw.directive('intro', function(list) {
         scope.test = "No";
         scope.name = "Introduction"
         
-        el.on('enter:intro', function(event) {
-          console.log('Calling intro.onEnter');
-          console.log('Entered intro slide');
+        scope.$on('enter:intro', function(event) {
+          console.log(':: Entering: intro');
         });
+        
+        scope.$on('exit:intro', function(event) {
+          console.log(':: Exiting: intro');
+        })
       }
     }
   })
