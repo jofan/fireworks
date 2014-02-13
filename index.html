@@ -14,12 +14,12 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="lib/reveal/css/reveal.min.css">
+		<link rel="stylesheet" href="lib/reveal/css/reveal.css">
 		<link rel="stylesheet" href="lib/reveal/css/theme/sky.css" id="theme">
 		
 		<style>
 			body {
-				background-image: url('content/img/slide-bg.png');
+				background-image: url('slides/content/img/slide-bg.png');
 				background-repeat: no-repeat;
 				background-size: cover;	
 			}
@@ -32,8 +32,9 @@
 		</style>
 
 		<link rel="stylesheet" type="text/css" href="css/menu.css">
-		<link rel="stylesheet" type="text/css" href="css/start.css">
-		<link rel="stylesheet" type="text/css" href="css/blue_urine.css">
+		<link rel="stylesheet" type="text/css" href="slides/start/start.css">
+		<link rel="stylesheet" type="text/css" href="slides/diabetes_patients/nr-of-patients.css">
+		<link rel="stylesheet" type="text/css" href="slides/diabetes_atlas/diabetes_atlas.css">
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/reveal/lib/css/zenburn.css">
@@ -50,32 +51,44 @@
 
 	<body ng-app="fireworks">
 		
-		<nav id="menu">
-		</nav>
-		
-		<div fireworks="presentation.json">
+		<div fireworks="storyboard.json">
+			
+			<nav fw-menu id="menu">
+			</nav>
 		
 			<!-- Any section element inside of this container is displayed as a slide -->
-			<div fw-slides="center previewLinks">
-		
-				<!-- <section fw-template="start"></section>
-				<section fw-template="heads-up.html"></section> -->
+			<div fw-slides previewLinks="true">
+				
+				<!-- <section fw-template="heads-up.html"></section> -->
 		
 			</div>
+			
+			<div fw-thumbs path="slides/<id>/<id>.png"></div>
 			
 			<div fw-progress></div>
 			<aside fw-controls></aside>
 			<div class="pause-overlay"></div>
+			
+			<div ag-analytics
+				 version="1.1"
+				 map="js/monitormap.js"
+				 exclude="fast_track"	 
+			></div>
 		
 		</div>
 
 		<script src="lib/angularjs/angular.min.js"></script>
+		<script src="lib/angularjs/angular-touch.min.js"></script>
 		<script src="lib/reveal/lib/js/head.min.js"></script>
-		<script src="lib/reveal/js/reveal.js"></script>
+		<!--<script src="lib/reveal/js/reveal.js"></script>-->
+		<script src="lib/draggy.js"></script>
+		<script src="lib/touchy.js"></script>
 
 		<script src="js/fireworks.js"></script>
-		<script src="slides/start.js"></script>
-		<script src="slides/intro.js"></script>
+		<script src="slides/start/start.js"></script>
+		<script src="slides/intro/intro.js"></script>
+		<script src="slides/diabetes_patients/nr-of-patients.js"></script>
+		<script src="slides/diabetes_atlas/diabetes_atlas.js"></script>
 
 		<script>
 			

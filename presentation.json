@@ -14,7 +14,7 @@
 		"remepan": {
 			"id": "remepan",
 			"name": "Remepan presentation",
-			"content": ["start", "intro", "blue_urine", "heads-up"]
+			"content": ["start", "diabetes_atlas", "intro", "diabetes_patients", "heads-up"]
 		},
 		"intro": {
 			"id": "intro",

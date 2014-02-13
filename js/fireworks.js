@@ -42,8 +42,8 @@ function getAbsoluteHeight( element ) {
 
 }
 
-var fw = angular.module('fireworks', [])
-  .config(function($controllerProvider, $compileProvider, $filterProvider, $provide)
+var fw = angular.module('fireworks', ['ngTouch'])
+  .config(function($locationProvider, $controllerProvider, $compileProvider, $filterProvider, $provide)
   {
       // We need to reference this for lazy loading
       // http://ify.io/lazy-loading-in-angularjs/
@@ -52,6 +52,9 @@ var fw = angular.module('fireworks', [])
       // fw.registerRoute      = $routeProvider.register;
       fw.registerFilter     = $filterProvider.register;
       fw.provide            = $provide;
+      
+      // $locationProvider.html5Mode(true);
+      
   })
   
   .directive('fireworks', function($http, $location, list) {
@@ -74,21 +77,21 @@ var fw = angular.module('fireworks', [])
                       list.goTo(slide);
                       this.current = slide;
                       $location.path(slide);
-                      // $scope.$emit('slidechange', list.getIndex());
+                      $scope.$emit('slidechange', list.getIndex());
                   },
                   next: function() {
                       this.previous = list.get();
                       list.next();
                       this.current = list.get();
                       $location.path(this.current);
-                      // $scope.$emit('slidechange', list.getIndex());
+                      $scope.$emit('slidechange', list.getIndex());
                   },
                   prev: function() {
                       this.previous = list.get();
                       list.previous();
                       this.current = list.get();
                       $location.path(this.current);
-                      // $scope.$emit('slidechange', list.getIndex());
+                      $scope.$emit('slidechange', list.getIndex());
                   },
                   left: function() {},
                   right: function() {},
@@ -101,27 +104,33 @@ var fw = angular.module('fireworks', [])
                   var path = $location.path().match(/\/(\w|-|_)+/g) || ["/"];
                   // TODO: allow more items in path, e.g. chapter/subchapter/slide
                   var slide = path[0].replace("/", "");
+                  var previous = list.get();
                   
-                  if (slide) {
+                  if (slide && slide !== $scope.fw.current) {
                       // Check if slide exist in current list
                       if (list.getIndex(slide)) {
                           list.goTo(slide);
+                          $scope.fw.previous = previous;
+                          $scope.fw.current = slide;
+                          
+                          $scope.$emit('slidechange', list.getIndex());
                       }
                       // if not, then check if it exist as slide in model
                       // TODO: update with check if the slide exist
-                      else {
-                          list.setList([slide]);
-                          // list.goTo(slide);
-                      }
-                      $scope.fw.current = slide;
-                  }
-                  else {
-                      $scope.fw.current = list.get();
+                      // else {
+                      //     list.setList([slide]);
+                      //     list.goTo(slide);
+                      // }
+                      // $scope.fw.previous = previous;
+                      // $scope.fw.current = slide;
+                      // 
+                      // $scope.$emit('slidechange', list.getIndex());
+                      
                   }
               }
               this.changeSlide = function() {
-                  this.readUrl();
-                  $scope.$emit('slidechange', list.getIndex());
+                  // this.readUrl();
+                  // $scope.$emit('slidechange', list.getIndex());
                   $scope.$emit('exit:' + $scope.fw.previous);
                   $scope.$emit('enter:' + $scope.fw.current);
               }
@@ -132,14 +141,25 @@ var fw = angular.module('fireworks', [])
               this.ready = function() {
                   $scope.$emit('fw:ready');
               }
+              
+              $scope.$on('slidechange', this.changeSlide)
           },
           link: function linkFn(scope, el, attrs, ctrl) {
               var model = attrs.fireworks || "";
               var initialList = attrs.fwInit || null;
               var slides = [];
 
-              el.addClass('reveal');
+              el.addClass('reveal linear');
               
+              // Check if any slides are hard-coded in index file
+              var htmlSlides = el[0].querySelectorAll('.slides > section');
+              // If we got hard-coded slides, they'll be prepended to the list set below
+              // Slides without id will be ignored
+              toArray(htmlSlides).forEach(function(sEl) {
+                  if (sEl.id) slides.push(sEl.id);  
+              });
+              
+                            
               if (/\.json$/.test(model)) {
                   // Read JSON file and get initial list from there
                   $http.get(model).success(function(data) {
@@ -149,17 +169,17 @@ var fw = angular.module('fireworks', [])
                           // If an initial list has been defined
                           if (initialList) {
                               if (data.structures[initialList]) {
-                                  slides = data.structures[initialList].content;
+                                  slides = slides.concat(data.structures[initialList].content);
                               }
                           }
                           // Open first item in storyboard
                           else if (data.storyboard) {
-                              slides = data.structures[data.storyboard[0]].content;
+                              slides = slides.concat(data.structures[data.storyboard[0]].content);
                           }
                       }
                       // Try to set storyboard as list
                       else {
-                          if (data.storyboard) slides = data.storyboard;
+                          if (data.storyboard) slides = slides.concat(data.storyboard);
                       }
                       
                       list.setList(slides);
@@ -167,6 +187,7 @@ var fw = angular.module('fireworks', [])
                   })
               }
               else {
+                  // We treat the string as a list of slides separated with comma or space
                   slides = model.replace(/,/g, ' ').replace("  ", " ").split(" ");
                   list.setList(slides);
                   scope.model = {
@@ -184,12 +205,24 @@ var fw = angular.module('fireworks', [])
       }
   })
   
-  .directive('fwSlides', function($compile, $window, list) {
+  .directive('fwSlides', function($compile, $window, $swipe, list) {
     return {
       require: "^fireworks",  
       link: function linkFn(scope, el, attrs, ctrl) {
           
         el.addClass('slides');
+        
+        // var x = null;
+        // 
+        // function testSwipeStart(coord) {
+        //     x = coord.x;
+        // }
+        // 
+        // function testSwipeEnd(coord) {
+        //     $window.alert('Start: ' + x + ', End: ' + coord.x);
+        // }
+        // 
+        // $swipe.bind(el, {start: testSwipeStart, end: testSwipeEnd});
           
         var parent = el.parent();
         
@@ -214,7 +247,7 @@ var fw = angular.module('fireworks', [])
             layout();
             // Every time the URL updates, change the slide
             scope.$on('$locationChangeStart', function(event, path) {
-                ctrl.changeSlide();
+                ctrl.readUrl();
             });
         });
         
@@ -264,7 +297,7 @@ var fw = angular.module('fireworks', [])
             }
             // Apply scale transform as a fallback
             else {
-                transformElement( el[0], 'translate(-50%, -50%) scale('+ scale +') translate(50%, 50%)' );
+                // transformElement( el[0], 'translate(-50%, -50%) scale('+ scale +') translate(50%, 50%)' );
             }
         }
         
@@ -291,7 +324,7 @@ var fw = angular.module('fireworks', [])
         
         scope[template] = {};
         // console.log(classes);
-        $http.get('slides/templates/' + template + ".html").success(function(html) {
+        $http.get('slides/' + template + '/' + template + '.html').success(function(html) {
           var slide = angular.element(html);
           $compile(slide)(scope);
           slide.addClass(classes.join(" "));

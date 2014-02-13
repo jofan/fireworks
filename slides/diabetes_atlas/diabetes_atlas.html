@@ -1,0 +1,77 @@
+<section diabetes-atlas id="diabetes" class="slide" data-transition="zoom" data-pdf="Nullam-2008">
+	<h1 data-ag-editable="Diabetes header">Type 2 Diabetes Atlas</h1>
+	<div class="map-wrapper">
+		<div class="region blue">
+			<button ng-click="showRegionStats($event)" data-region="North America"></button>
+			<div class="info">
+				<div class="circle">38</div>
+				<p data-ag-editable="Undiagnosed diabetes">
+					<span class="val">29.2%</span>
+					<span data-ag-editable="i18n: undiagnosed">undiagnosed</span>
+				</p>
+				<span class="with-man">10.5%</span>
+			</div>
+		</div>
+		<div class="region red">
+			<button ng-click="showRegionStats($event)" data-region="Europe"></button>
+			<div class="info">
+				<div class="circle">55</div>
+				<p>
+					<span class="val">38.6%</span>
+					<span data-ag-editable="i18n: undiagnosed">undiagnosed</span>
+				</p>
+				<span class="with-man">6.7%</span>
+			</div>
+		</div>
+		<div class="region orange">
+			<button ng-click="showRegionStats($event)" data-region="Africa"></button>
+			<div class="info">
+				<div class="circle">15</div>
+				<p>
+					<span class="val">81.2%</span>
+					<span data-ag-editable="i18n: undiagnosed">undiagnosed</span>
+				</p>
+				<span class="with-man">4.3%</span>
+			</div>
+		</div>
+		<div class="region dark-orange">
+			<button ng-click="showRegionStats($event)" data-region="Middle East"></button>
+			<div class="info">
+				<div class="circle">34</div>
+				<p>
+					<span class="val">52.9%</span>
+					<span data-ag-editable="i18n: undiagnosed">undiagnosed</span>
+				</p>
+				<span class="with-man">10.9%</span>
+			</div>
+		</div>
+		<div class="region green">
+			<button ng-click="showRegionStats($event)" data-region="Asia and Australia"></button>
+			<div class="info">
+				<div class="circle">132</div>
+				<p>
+					<span class="val">57.9%</span>
+					<span data-ag-editable="i18n: undiagnosed">undiagnosed</span>
+				</p>
+				<span class="with-man">8.0%</span>
+			</div>
+		</div>
+		<div class="region light-green">
+			<button ng-click="showRegionStats($event)" data-region="South America"></button>
+			<div class="info">
+				<div class="circle">26</div>
+				<p>
+					<span class="val">45.5%</span>
+					<span data-ag-editable="i18n: undiagnosed">undiagnosed</span>
+				</p>
+				<span class="with-man">9.2%</span>
+			</div>
+		</div>
+	</div>
+	<p class="general-info">
+		<strong class="val">371</strong> <span data-ag-editable="People with diabetes">million worldwide living with diabetes</span>
+		<span class="val"><strong>50</strong>% <span data-ag-editable="i18n: undiagnosed">undiagnosed</span></span>
+		<strong class="with-man">8.3</strong>% <span data-ag-editable="i18n: Prevalence">Prevalence</span>
+	</p>
+	<button class="blue-flag" data-ag-editable="Diabetes next button">And you?</button>
+</section>

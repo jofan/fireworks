@@ -712,6 +712,9 @@ body {
  *********************************************/
 
 .reveal .slides>section[data-transition=zoom].past,
+.reveal.linear .slides>section[data-transition=zoom].past,
+.reveal.concave .slides>section[data-transition=zoom].past,
+.reveal.fade .slides>section[data-transition=zoom].past,
 .reveal.zoom .slides>section.past {
 	opacity: 0;
 	visibility: hidden;
@@ -723,6 +726,9 @@ body {
 	        transform: scale(16);
 }
 .reveal .slides>section[data-transition=zoom].future,
+.reveal.linear .slides>section[data-transition=zoom].future,
+.reveal.concave .slides>section[data-transition=zoom].future,
+.reveal.fade .slides>section[data-transition=zoom].future,
 .reveal.zoom .slides>section.future {
 	opacity: 0;
 	visibility: hidden;
@@ -735,6 +741,9 @@ body {
 }
 
 .reveal .slides>section>section[data-transition=zoom].past,
+.reveal.linear .slides>section>section[data-transition=zoom].past,
+.reveal.concave .slides>section>section[data-transition=zoom].past,
+.reveal.fade .slides>section>section[data-transition=zoom].past,
 .reveal.zoom .slides>section>section.past {
 	-webkit-transform: translate(0, -150%);
 	   -moz-transform: translate(0, -150%);
@@ -743,6 +752,9 @@ body {
 	        transform: translate(0, -150%);
 }
 .reveal .slides>section>section[data-transition=zoom].future,
+.reveal.linear .slides>section>section[data-transition=zoom].future,
+.reveal.concave .slides>section>section[data-transition=zoom].future,
+.reveal.fade .slides>section>section[data-transition=zoom].future,
 .reveal.zoom .slides>section>section.future {
 	-webkit-transform: translate(0, 150%);
 	   -moz-transform: translate(0, 150%);
@@ -764,6 +776,9 @@ body {
 }
 
 .reveal .slides>section[data-transition=linear].past,
+.reveal.zoom .slides>section[data-transition=linear].past,
+.reveal.concave .slides>section[data-transition=linear].past,
+.reveal.fade .slides>section[data-transition=linear].past,
 .reveal.linear .slides>section.past {
 	-webkit-transform: translate(-150%, 0);
 	   -moz-transform: translate(-150%, 0);
@@ -772,6 +787,9 @@ body {
 	        transform: translate(-150%, 0);
 }
 .reveal .slides>section[data-transition=linear].future,
+.reveal.zoom .slides>section[data-transition=linear].future,
+.reveal.concave .slides>section[data-transition=linear].future,
+.reveal.fade .slides>section[data-transition=linear].future,
 .reveal.linear .slides>section.future {
 	-webkit-transform: translate(150%, 0);
 	   -moz-transform: translate(150%, 0);
@@ -781,6 +799,9 @@ body {
 }
 
 .reveal .slides>section>section[data-transition=linear].past,
+.reveal.zoom .slides>section>section[data-transition=linear].past,
+.reveal.concave .slides>section>section[data-transition=linear].past,
+.reveal.fade .slides>section>section[data-transition=linear].past,
 .reveal.linear .slides>section>section.past {
 	-webkit-transform: translate(0, -150%);
 	   -moz-transform: translate(0, -150%);
@@ -789,6 +810,9 @@ body {
 	        transform: translate(0, -150%);
 }
 .reveal .slides>section>section[data-transition=linear].future,
+.reveal.zoom .slides>section>section[data-transition=linear].future,
+.reveal.concave .slides>section>section[data-transition=linear].future,
+.reveal.fade .slides>section>section[data-transition=linear].future,
 .reveal.linear .slides>section>section.future {
 	-webkit-transform: translate(0, 150%);
 	   -moz-transform: translate(0, 150%);
