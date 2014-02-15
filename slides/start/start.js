@@ -16,7 +16,7 @@ angular.module('fireworks').directive("epidemicGraph", function() {
             clickCounter++;
             slideElement.classList.add('step-' + clickCounter);
             if(clickCounter === 2){
-              // slideElement.removeEventListener('click', rightNumberGraphsAnimation);
+              slideElement.removeEventListener('click', rightNumberGraphsAnimation);
               setTimeout(function(){
                 countUpInterval = setInterval(function(){
                   redBulletNumber.innerHTML = currentCountOfPatients;
@@ -26,11 +26,6 @@ angular.module('fireworks').directive("epidemicGraph", function() {
                   }
                 }, 15);
               }, 500);
-            }
-            if(clickCounter > 2) {
-              scope.$apply(function() {
-                scope.fw.next();
-              });
             }
           };
         redBulletNumber.innerHTML = currentCountOfPatients;

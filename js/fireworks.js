@@ -60,6 +60,13 @@ var fw = angular.module('fireworks', ['ngTouch'])
   .directive('fireworks', function($http, $location, list) {
       return {
           controller: function($scope) {
+              
+              // Could be replaced with a $scope.$watch for 'fw.current'
+              function update() {
+                  $location.path($scope.fw.current);
+                  $scope.$emit('slidechange', list.getIndex());
+              } 
+              
               // PUBLIC API - available to views, e.g. in ng-click
               $scope.fw = {
                   config: {
@@ -76,22 +83,19 @@ var fw = angular.module('fireworks', ['ngTouch'])
                       this.previous = list.get();
                       list.goTo(slide);
                       this.current = slide;
-                      $location.path(slide);
-                      $scope.$emit('slidechange', list.getIndex());
+                      update();
                   },
                   next: function() {
                       this.previous = list.get();
                       list.next();
                       this.current = list.get();
-                      $location.path(this.current);
-                      $scope.$emit('slidechange', list.getIndex());
+                      update();
                   },
                   prev: function() {
                       this.previous = list.get();
                       list.previous();
                       this.current = list.get();
-                      $location.path(this.current);
-                      $scope.$emit('slidechange', list.getIndex());
+                      update();
                   },
                   left: function() {},
                   right: function() {},
@@ -106,6 +110,7 @@ var fw = angular.module('fireworks', ['ngTouch'])
                   var slide = path[0].replace("/", "");
                   var previous = list.get();
                   
+                  // Only update if URL is not the current slide displayed
                   if (slide && slide !== $scope.fw.current) {
                       // Check if slide exist in current list
                       if (list.getIndex(slide)) {
@@ -129,8 +134,6 @@ var fw = angular.module('fireworks', ['ngTouch'])
                   }
               }
               this.changeSlide = function() {
-                  // this.readUrl();
-                  // $scope.$emit('slidechange', list.getIndex());
                   $scope.$emit('exit:' + $scope.fw.previous);
                   $scope.$emit('enter:' + $scope.fw.current);
               }
@@ -207,11 +210,16 @@ var fw = angular.module('fireworks', ['ngTouch'])
   
   .directive('fwSlides', function($compile, $window, $swipe, list) {
     return {
-      require: "^fireworks",  
+      require: "^fireworks",
+      template: '<div class="slides"></div>',
+      replace: true,
       link: function linkFn(scope, el, attrs, ctrl) {
-          
-        el.addClass('slides');
         
+        // Make sure we scale presentation if window size change
+        $window.addEventListener( 'resize', layout, false );
+        
+        var slidesInDOM = [];
+          
         // var x = null;
         // 
         // function testSwipeStart(coord) {
@@ -231,11 +239,7 @@ var fw = angular.module('fireworks', ['ngTouch'])
             var slides = list.getList();
             
             slides.forEach(function(slide, i) {
-                var newSlide = document.createElement('section');
-                newSlide.setAttribute('fw-template', slide);
-                newSlide.setAttribute('slide-index', i);
-                el[0].appendChild(newSlide);
-                $compile(newSlide)(scope);
+                addSlide(slide, i)
             });
             
             ctrl.sync();
@@ -243,16 +247,25 @@ var fw = angular.module('fireworks', ['ngTouch'])
         });
         
         scope.$on('fw:sync', function() {
-            // ctrl.changeSlide();
+            // Get slides
             layout();
-            // Every time the URL updates, change the slide
-            scope.$on('$locationChangeStart', function(event, path) {
-                ctrl.readUrl();
-            });
+            // Every time the URL updates, check if the slide should change
+            
         });
         
-        $window.addEventListener( 'resize', layout, false );
+        scope.$on('$locationChangeStart', function(event, path) {
+            ctrl.readUrl();
+        });
         
+        function addSlide (slide, i) {
+            var newSlide = document.createElement('section');
+            newSlide.setAttribute('fw-template', slide);
+            newSlide.setAttribute('slide-index', i);
+            el[0].appendChild(newSlide);
+            $compile(newSlide)(scope);
+        }
+        
+        // Scale slides container according to config - from Reveal.js
         function layout () {
         
             // Available space to scale within
@@ -617,21 +630,28 @@ var fw = angular.module('fireworks', ['ngTouch'])
        
      };
      
-     // Should move vertically if possible
-     function next () {
-       // See if there is an item below
+     // Return the next item available (down or right)
+     function getNext () {
+       // See if there is an item below to go to
+       // else go to the next item to the right if available
        var downIndex = {h: current.h, v: current.v + 1};
        var rightIndex = {h: current.h + 1, v: 0};
        var itemBelow = get(downIndex.h, downIndex.v);
        var itemRight;
        if (itemBelow) {
-         _set(downIndex);
+         return downIndex
        }
        else {
          itemRight = get(rightIndex.h, 0);
-         if (itemRight) _set(rightIndex);
+         if (itemRight) return rightIndex;
        }
-       
+       return undefined;
+     }
+     
+     // Should move vertically if possible
+     function next () {
+       var nextItem = getNext();
+       if (nextItem) _set(nextItem);
      };
      
      // Should move vertically if possible
@@ -823,6 +843,7 @@ var fw = angular.module('fireworks', ['ngTouch'])
     return {
       get: get,
       getIndex: getIndex,
+      getNext: getNext,
       getList: getList,
       setList: setList,
       goTo: goTo,
