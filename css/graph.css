@@ -1,0 +1,83 @@
+.graph{
+	position: relative;
+	padding: 1px;
+	-webkit-box-sizing: border-box;
+}
+.g-scale-v,
+.g-scale-h{
+	position: absolute;
+	display: -webkit-box;
+	-webkit-box-pack: justify;
+	-webkit-box-sizing: border-box;
+}
+.g-scale-item{
+	position: relative;
+}
+.g-scale-v{
+	top: 0;
+	bottom: 0;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: reverse;
+}
+.g-scale-v *{
+	-webkit-transform-origin: 100% 0;
+}
+.g-scale-v .g-scale-label{
+	position: absolute;
+	text-align: center;
+	-webkit-transform: rotate(-90deg);
+}
+.g-scale-h{
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 0;
+}
+.g-scale-item{
+	display: -webkit-box;
+	-webkit-box-pack: center;
+}
+.g-bargroup{
+	display: -webkit-box;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
+	-webkit-box-align: end;
+	-webkit-box-pack: justify;
+}
+.g-bar{
+	position: relative;
+}
+.g-bar-value{
+	width: 100%;
+	text-align: center;
+}
+.g-bar-nest{
+	display: -webkit-box;
+	position: relative;
+	-webkit-box-align: end;
+	-webkit-box-pack: justify;
+}
+.g-legend{
+	position: absolute;
+}
+.g-3d .g-bar::before{
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	-webkit-transform-origin: 0% 100%;
+}
+.g-3d .g-bar::after{
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 100%;
+	height: 100%;
+	-webkit-transform-origin: 0% 0%;
+}

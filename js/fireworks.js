@@ -47,30 +47,26 @@ var fw = angular.module('fireworks', ['ngTouch'])
   {
       // We need to reference this for lazy loading
       // http://ify.io/lazy-loading-in-angularjs/
-      fw.registerCtrl       = $controllerProvider.register;
-      fw.registerDirective  = $compileProvider.register;
-      // fw.registerRoute      = $routeProvider.register;
+      fw.registerController = $controllerProvider.register;
+      fw.register           = $compileProvider.directive;
       fw.registerFilter     = $filterProvider.register;
       fw.provide            = $provide;
-      
-      // $locationProvider.html5Mode(true);
       
   })
   
   .directive('fireworks', function($http, $location, list) {
       return {
-          controller: function($scope) {
+          controller: function($rootScope, $scope, $timeout) {
               
               // Could be replaced with a $scope.$watch for 'fw.current'
               function update() {
                   $location.path($scope.fw.current);
-                  $scope.$emit('slidechange', list.getIndex());
               } 
               
               // PUBLIC API - available to views, e.g. in ng-click
               $scope.fw = {
                   config: {
-                      center: true,
+                      center: false,
                       width: 960,
                       height: 700,
                       margin: 0.1,
@@ -105,67 +101,94 @@ var fw = angular.module('fireworks', ['ngTouch'])
               
               // PRIVATE API - only available to directives requiring it
               this.readUrl = function() {
+                  var slide,chapter;
                   var path = $location.path().match(/\/(\w|-|_)+/g) || ["/"];
-                  // TODO: allow more items in path, e.g. chapter/subchapter/slide
-                  var slide = path[0].replace("/", "");
                   var previous = list.get();
                   
-                  // Only update if URL is not the current slide displayed
-                  if (slide && slide !== $scope.fw.current) {
-                      // Check if slide exist in current list
-                      if (list.getIndex(slide)) {
-                          list.goTo(slide);
-                          $scope.fw.previous = previous;
-                          $scope.fw.current = slide;
-                          
-                          $scope.$emit('slidechange', list.getIndex());
+                  // TODO: allow more items in path, e.g. chapter/subchapter/slide
+                  if (path.length === 2) {
+                      slide = path[1].replace("/", "");
+                      chapter = path[0].replace("/", "");
+                  }
+                  else {
+                      slide = path[path.length - 1].replace("/", "");
+                  }
+                  
+                  if (chapter) {
+                      if ($scope.model.structures[chapter]) {
+                          list.setList($scope.model.structures[chapter].content);
                       }
-                      // if not, then check if it exist as slide in model
-                      // TODO: update with check if the slide exist
-                      // else {
-                      //     list.setList([slide]);
-                      //     list.goTo(slide);
-                      // }
-                      // $scope.fw.previous = previous;
-                      // $scope.fw.current = slide;
-                      // 
-                      // $scope.$emit('slidechange', list.getIndex());
+                  }
+                  
+                  if (slide) {
+                      // Only update if URL is not the current slide displayed
+                      if (slide !== $scope.fw.current) {
+                          // Check if slide exist in current list
+                          if (list.getIndex(slide)) {
+                              list.goTo(slide);
+                              $scope.fw.previous = previous;
+                              $scope.fw.current = slide;
+                          }
+                          // if not, then check if it exist as slide in model
+                          // TODO: update with check if the slide exist
+                          else {
+                             // Open an individual slide
+                             if ($scope.model.slides[slide]) {
+                                list.setList([slide]);
+                                list.goTo(slide);
+                                $scope.fw.previous = previous;
+                                $scope.fw.current = slide;
+                             }
+                             // open a new list
+                             else if ($scope.model.structures[slide]) {
+                                 list.setList($scope.model.structures[slide].content);
+                                 list.gotoFirst();
+                                 $scope.fw.previous = previous;
+                                 $scope.fw.current = list.get();
+                             }
+                          }
+                      }
                       
+                  }
+                  else {
+                      // If no slide in URL then we set the first in list
+                      list.gotoFirst();
+                      $scope.fw.current = list.get();
                   }
               }
               this.changeSlide = function() {
-                  $scope.$emit('exit:' + $scope.fw.previous);
-                  $scope.$emit('enter:' + $scope.fw.current);
+                  $rootScope.$broadcast('exit:' + $scope.fw.previous);
+                  $rootScope.$broadcast('enter:' + $scope.fw.current);
               }
               this.sync = function() {
                   this.readUrl();
-                  $scope.$emit('fw:sync');
+                  $rootScope.$broadcast('fw:sync');
               }
               this.ready = function() {
-                  $scope.$emit('fw:ready');
+                  $timeout(function() {
+                    $scope.$emit('fw:ready');
+                  }, 100); // Make sure plugin listeners have time to register
               }
               
               $scope.$on('slidechange', this.changeSlide)
           },
           link: function linkFn(scope, el, attrs, ctrl) {
-              var model = attrs.fireworks || "";
+              var model = attrs.fireworks || "presentation.json";
               var initialList = attrs.fwInit || null;
               var slides = [];
-
-              el.addClass('reveal linear');
+              var transition = attrs.transition || 'default';
               
-              // Check if any slides are hard-coded in index file
-              var htmlSlides = el[0].querySelectorAll('.slides > section');
-              // If we got hard-coded slides, they'll be prepended to the list set below
-              // Slides without id will be ignored
-              toArray(htmlSlides).forEach(function(sEl) {
-                  if (sEl.id) slides.push(sEl.id);  
-              });
+
+              el.addClass('reveal ' + transition);
               
                             
               if (/\.json$/.test(model)) {
                   // Read JSON file and get initial list from there
                   $http.get(model).success(function(data) {
+                      data.slides = data.slides || null; // Null means we will try to load CSS and JS automatically
+                      data.structures = data.structures || null;
+                      data.storyboard = data.storyboard || [];
+                      
                       scope.model = data;
                       // If the model defines the structures
                       if (data.structures) {
@@ -194,6 +217,7 @@ var fw = angular.module('fireworks', ['ngTouch'])
                   slides = model.replace(/,/g, ' ').replace("  ", " ").split(" ");
                   list.setList(slides);
                   scope.model = {
+                      "slides": null,
                       "structures": {
                           "presentation": {
                               "content": slides
@@ -208,16 +232,16 @@ var fw = angular.module('fireworks', ['ngTouch'])
       }
   })
   
-  .directive('fwSlides', function($compile, $window, $swipe, list) {
+  .directive('fwSlides', function($rootScope, $compile, $window, $swipe, $timeout, $templateCache, list) {
     return {
       require: "^fireworks",
-      template: '<div class="slides"></div>',
-      replace: true,
+      // template: '<div class="slides"></div>',
+      // replace: true,
       link: function linkFn(scope, el, attrs, ctrl) {
+        scope.pathToSlides = attrs.path || 'slides/<id>/';
         
         // Make sure we scale presentation if window size change
         $window.addEventListener( 'resize', layout, false );
-        
         var slidesInDOM = [];
           
         // var x = null;
@@ -238,31 +262,132 @@ var fw = angular.module('fireworks', ['ngTouch'])
         scope.$on('fw:ready', function() {
             var slides = list.getList();
             
-            slides.forEach(function(slide, i) {
-                addSlide(slide, i)
+            // Check if any slides are hard-coded in index file
+            var htmlSlides = el[0].querySelectorAll('section');
+            // If we got hard-coded slides, they'll be prepended to the list set below
+            // Slides without id will be ignored
+            toArray(htmlSlides).forEach(function(sEl) {
+                var slidePath = null;
+                if (sEl.id) {
+                    slidePath = scope.pathToSlides.replace(/<id>/g, sEl.id);
+                    if (!list.getIndex(sEl.id)) {
+                        list.append(sEl.id);
+                    }
+                    var wrap = document.createElement('div');
+                    wrap.appendChild(sEl.cloneNode(true));
+                    $templateCache.put(slidePath + sEl.id + ".html", wrap.innerHTML);
+                    
+                    sEl.setAttribute('fw-template', sEl.id);
+                    var i = list.getIndex(sEl.id);
+                    if (i) sEl.setAttribute('slide-index', i.h + ' ' + i.v);
+                    sEl.classList.add('future');
+                    $compile(sEl)(scope);
+                    slidesInDOM.push(sEl.id);
+                }
+            });
+            
+            // Every time the URL updates, check if the slide should change
+            scope.$on('$locationChangeStart', function(event, path) {
+                ctrl.sync();
             });
             
             ctrl.sync();
             
         });
         
+        $rootScope.$on('remove:slide', function(event, id) {
+          var loc = slidesInDOM.indexOf(id);
+          if (loc !== -1) slidesInDOM.splice(loc, 1);
+          console.log('Removed slide: ' + id, slidesInDOM);
+        });
+        
+        // At this point the list have been updated to reflect the latest state
+        scope.$watch('fw.current', function() {
+            var slideIndex, rightSlide, leftSlide, upSlide, downSlide;
+            if (scope.fw.current) {
+                slideIndex = list.getIndex();
+                rightSlide = list.get(slideIndex.h + 1, 0);
+                leftSlide = list.get(slideIndex.h - 1, 0);
+                upSlide = list.get(slideIndex.h, slideIndex.v - 1);
+                downSlide = list.get(slideIndex.h, slideIndex.v + 1);
+                // Check if this slide is in the DOM
+                if (slidesInDOM.indexOf(scope.fw.current) === -1) {
+                    addSlide(scope.fw.current, list.getIndex());
+                }
+                // Slide to the right
+                if (rightSlide) {
+                   if (slidesInDOM.indexOf(rightSlide) === -1) {
+                       addSlide(rightSlide, {h: slideIndex.h + 1, v: 0});
+                   }
+                }
+                if (leftSlide) {
+                   if (slidesInDOM.indexOf(leftSlide) === -1) {
+                       addSlide(leftSlide, {h: slideIndex.h - 1, v: 0});
+                   }
+                }
+                if (upSlide) {
+                   if (slidesInDOM.indexOf(upSlide) === -1) {
+                       addSlide(upSlide, {h: slideIndex.h, v: slideIndex.v - 1});
+                   }
+                }
+                if (downSlide) {
+                   if (slidesInDOM.indexOf(downSlide) === -1) {
+                       addSlide(downSlide, {h: slideIndex.h, v: slideIndex.v + 1});
+                   }
+                }
+                // $timeout(function() {
+                    $rootScope.$broadcast('slidechange', list.getIndex());
+                // },50);
+            }
+        });
+        
+        // Find out what slides we need to have in DOM
+        // and add the ones we don't
         scope.$on('fw:sync', function() {
-            // Get slides
+            // Get slides that are in range now
             layout();
-            // Every time the URL updates, check if the slide should change
-            
         });
         
-        scope.$on('$locationChangeStart', function(event, path) {
-            ctrl.readUrl();
-        });
-        
-        function addSlide (slide, i) {
+        function createElement (slide, i) {
             var newSlide = document.createElement('section');
             newSlide.setAttribute('fw-template', slide);
-            newSlide.setAttribute('slide-index', i);
+            newSlide.setAttribute('slide-index', i.h + ' ' + i.v);
+            newSlide.classList.add('future');
             el[0].appendChild(newSlide);
             $compile(newSlide)(scope);
+            slidesInDOM.push(slide);  
+        }
+        
+        // See if there are any CSS or JS dependecies and load those first
+        function addSlide (slide, i) {
+            var slideData = null;
+            var files = [];
+            var pathToFiles = scope.pathToSlides.replace(/<id>/g, slide);
+            // If model.type is 'component', look up component.json file once and create model.slides from that
+            // If model.slides is defined, then dependencies are expected to be defined per slide
+            if (scope.model.slides) {
+                var data = scope.model.slides[slide] || {};
+                if (data.files) {
+                    data.files.scripts = data.files.scripts || [];
+                    data.files.styles = data.files.styles || [];
+                    files = files.concat(data.files.scripts);
+                    files = files.concat(data.files.styles);
+                    head.load(files, function() {
+                       createElement(slide, i); 
+                    });
+                }
+                else {
+                    createElement(slide, i); 
+                }
+            }
+            // If model.slides is undefined, then we try to load one CSS and one JS file per slide
+            else {
+                files.push(pathToFiles + slide + '.js');
+                files.push(pathToFiles + slide + '.css');
+                head.load(files, function() {
+                    createElement(slide, i); 
+                }); 
+            }
         }
         
         // Scale slides container according to config - from Reveal.js
@@ -319,53 +444,93 @@ var fw = angular.module('fireworks', ['ngTouch'])
   })
   
   // For adding HTML that does not need JS
-  .directive('fwTemplate', function($http, $compile, $location, $timeout, list) {
+  .directive('fwTemplate', function($rootScope, $http, $compile, $location, $timeout, $templateCache, list) {
     return {
-      require: '^fireworks',
+      // require: '^fireworks',
+      scope: true,
       link: function linkFn(scope, el, attrs, ctrl) {
         var template = attrs.fwTemplate;
         var slideIndexRaw = attrs.slideIndex; 
         var classes = [].slice.call(el[0].classList);
         var slideIndex;
+        var timeToRemove = null;
+        var html = $templateCache.get('slides/' + template + '/' + template + '.html');
         
         if (slideIndexRaw) {
-            slideIndex = {h: slideIndexRaw, v:0}
+            slideIndexRaw = slideIndexRaw.split(' ');
+            slideIndex = {h: slideIndexRaw[0], v: slideIndexRaw[1] || 0}
         }
         else {
             slideIndex = list.getIndex(template);
         }
         
         scope[template] = {};
-        // console.log(classes);
-        $http.get('slides/' + template + '/' + template + '.html').success(function(html) {
-          var slide = angular.element(html);
-          $compile(slide)(scope);
-          slide.addClass(classes.join(" "));
-          el.replaceWith(slide);
-          el = slide;
-          updateSlide(list.getIndex());
-          positionSlide();
-          if (template === scope.fw.current) {
-              scope.$emit('enter:' + scope.fw.current);
-          }
-        });
+        
+        if (html) {
+            insertContent();
+        }
+        else {
+            $http.get('slides/' + template + '/' + template + '.html').success(function(str) {
+              html = str;
+              $templateCache.put('slides/' + template + '/' + template + '.html', html);
+              insertContent();
+            });
+        }
+        
+        function insertContent () {
+            var slide = angular.element(html);
+            $templateCache.put(template + '.html', html);
+            $compile(slide)(scope);
+            slide.addClass(classes.join(" "));
+            el.replaceWith(slide);
+            el = slide;
+            updateSlide(list.getIndex());
+            positionSlide();
+            if (template === scope.fw.current) {
+                scope.$emit('enter:' + scope.fw.current);
+            }
+        }
+        
+        function removeTemplate () {
+            timeToRemove = $timeout(function() {
+                // Check to make sure we're not an immediate neighbor
+                var cIndex = list.getIndex();
+                var hIndex = parseInt(slideIndex.h, 10);
+                // cIndex = 5 -> hIndex = 3, hIndex = 7
+                if (hIndex < (cIndex.h - 2) || hIndex > (cIndex.h + 2)) {
+                // if (cIndex.h !== hIndex && (hIndex - 1) !== cIndex.h && (hIndex + 1) !== cIndex.h) {
+                    scope.$destroy();
+                    el.remove();
+                    $rootScope.$broadcast('remove:slide', template);
+                }
+                else {
+                    timeToRemove = null;
+                }
+                // TODO: add check for verticals if current and this index is same
+            },10000); // TODO: change to about 1 minute
+        }
         
         function updateSlide (index) {
             // If h index is smaller, then class should be 'past'
-             if (index.h > slideIndex.h) {
-                 el.removeClass("present future");
-                 el.addClass("past");
-             }
-             // If h index is larger, then class should be 'future'
-             else if (index.h < slideIndex.h) {
-                 el.removeClass("present past");
-                 el.addClass("future");
-             }
-             // If h index is same as current, check vertical index
+            if (list.get() === template) {
+                if (timeToRemove) {
+                    $timeout.cancel(timeToRemove);
+                    timeToRemove = null;
+                }
+                el.removeClass("past future");
+                el.addClass("present");
+            }
+            // If h index is larger, then class should be 'future'
+            else if (index.h < slideIndex.h) {
+                if (!timeToRemove) removeTemplate();
+                el.removeClass("present past");
+                el.addClass("future");
+            }
              else {
-                 el.removeClass("past future");
-                 el.addClass("present");
-             } 
+                if (!timeToRemove) removeTemplate();
+                el.removeClass("present future");
+                el.addClass("past");
+            }
         }
         
         function positionSlide () {
@@ -373,14 +538,14 @@ var fw = angular.module('fireworks', ['ngTouch'])
                 // Vertical stacks are not centred since their section
                 // children will be
                 if(el.hasClass('stack')) {
-                    slide.style.top = 0;
+                    el[0].style.top = 0;
                 }
                 else {
-                    el[0].style.top = Math.max( - ( getAbsoluteHeight( el[0] ) / 2 ) - 20, -700 / 2 ) + 'px';
+                    el[0].style.top = Math.max( - ( getAbsoluteHeight( el[0] ) / 2 ) - 20, - scope.fw.config.height / 2 ) + 'px';
                 } 
             }
             else {
-                slide.style.top = '';
+                el[0].style.top = '';
             }
         }
         
@@ -393,8 +558,10 @@ var fw = angular.module('fireworks', ['ngTouch'])
     }
   })
   
-  .directive('fwProgress', function(list) {
+  // Copying the Reveal.js progress functionality
+  .directive('fwProgress', function($window, list) {
       return {
+          scope: {},
           link: function linkFn(scope, el, attrs) {
               // Add the span element that acts as the indicator bar
               var barEl = angular.element('<span></span>');
@@ -406,9 +573,15 @@ var fw = angular.module('fireworks', ['ngTouch'])
               function updateProgress (index) {
                   var index = index || list.getIndex();
                   var totalCount = list.getList().length; // TODO: replace with list.size()
-                  var pastCount = index.h; // TODO: replace with flattened list
+                  var pastCount = parseInt(index.h, 10); // TODO: replace with flattened list
+                  var width = ( pastCount / ( totalCount - 1 ) ) * $window.innerWidth;
                   
-                  barEl[0].style.width = ( pastCount / ( totalCount - 1 ) ) * window.innerWidth + 'px';
+                  if (totalCount > 1) {
+                    barEl[0].style.width = width + 'px';
+                  }
+                  else {
+                      barEl[0].style.width = $window.innerWidth + 'px';
+                  }
               }
               
               scope.$on('slidechange', function(event, index) {
@@ -416,16 +589,13 @@ var fw = angular.module('fireworks', ['ngTouch'])
                 updateProgress(index);
               });
               
-              scope.$on('fw:sync', function() {
-                  updateProgress();
-              })
-              
               
           }
       }
   })
   
-  .directive('fwControls', function(list) {
+  // Copying the Reveal.js controls functionality
+  .directive('fwControls', function($rootScope, list) {
       return {
           templateUrl: 'controls.html',
           replace: true,
@@ -453,12 +623,27 @@ var fw = angular.module('fireworks', ['ngTouch'])
               scope.$on('slidechange', function(event, index) {
                   updateControls(index);
               });
-              scope.$on('fw:sync', function() {
-                  updateControls(list.getIndex());
-              })
           }
       }
   })
+  
+  .directive('animateOnEnter', function() {
+      return {
+          link: function linkFn(scope, el, attrs) {
+              var slide = attrs.animateOnEnter || el[0].id;
+              if  (slide) {
+                  scope.$on('enter:' + slide, function() {
+                     setTimeout(function() {
+                        el.addClass('animate');
+                     }, 700);
+                  });
+                  scope.$on('exit:' + slide, function() {
+                     el.removeClass('animate'); 
+                  });
+              }
+          }
+      }
+  })   
   
   .factory('list', function() {
     
@@ -869,3 +1054,5 @@ fw.ready = function(fn) {
     fn()
   },100);
 }
+
+fw.register = fw.register || fw.directive;

@@ -4,9 +4,35 @@
 			"id": "start",
 			"name": "21st Century Epidemic",
 			"files": {
-				"templates": ["slides/templates/start.html"],
-				"scripts": ["slides/start.js"],
-				"styles": ["css/start.css"]
+				"templates": ["slides/start/start.html"],
+				"scripts": ["slides/start/start.js"],
+				"styles": ["slides/start/start.css"]
+			}
+		},
+		"intro": {
+			"id": "intro",
+			"name": "Presentation introduction",
+			"files": {
+				"templates": ["slides/intro/intro.html"],
+				"scripts": ["slides/intro/intro.js"]
+			}
+		},
+		"diabetes_patients": {
+			"id": "diabetes_patients",
+			"name": "How many patients with diabetes?",
+			"files": {
+				"templates": ["slides/diabetes_patients.html"],
+				"scripts": ["slides/diabetes_patients/di.js"],
+				"styles": ["slides/diabetes_patients/nr-of-patients.css"]
+			}
+		},
+		"moa": {
+			"id": "moa",
+			"name": "Mode of Action",
+			"files": {
+				"templates": ["slides/moa/moa.html"],
+				"scripts": ["slides/moa/moa.js"],
+				"styles": ["slides/moa/moa.css"]
 			}
 		}
 	},
@@ -14,7 +40,7 @@
 		"remepan": {
 			"id": "remepan",
 			"name": "Remepan presentation",
-			"content": ["start", "diabetes_atlas", "intro", "diabetes_patients", "heads-up"]
+			"content": ["start", "segmentation", "diabetes_atlas", "diabetes_patients", "moa", "investments", "risk_management", "diabetes_atlas", "summary"]
 		},
 		"intro": {
 			"id": "intro",

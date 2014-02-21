@@ -16,6 +16,7 @@
 
 		<link rel="stylesheet" href="lib/reveal/css/reveal.css">
 		<link rel="stylesheet" href="lib/reveal/css/theme/sky.css" id="theme">
+		<script src="lib/head.min.js"></script>
 		
 		<style>
 			body {
@@ -31,10 +32,16 @@
 			}
 		</style>
 
+		<link rel="stylesheet" type="text/css" href="css/main.css">
 		<link rel="stylesheet" type="text/css" href="css/menu.css">
-		<link rel="stylesheet" type="text/css" href="slides/start/start.css">
-		<link rel="stylesheet" type="text/css" href="slides/diabetes_patients/nr-of-patients.css">
+		<link rel="stylesheet" type="text/css" href="css/graph.css">
+		<!--<link rel="stylesheet" type="text/css" href="slides/start/start.css">
+		<link rel="stylesheet" type="text/css" href="slides/segmentation/segmentation.css">
 		<link rel="stylesheet" type="text/css" href="slides/diabetes_atlas/diabetes_atlas.css">
+		<link rel="stylesheet" type="text/css" href="slides/investments/investments.css">
+		<link rel="stylesheet" type="text/css" href="slides/risk_management/risk_management.css">
+		<link rel="stylesheet" type="text/css" href="slides/moa/moa.css">
+		<link rel="stylesheet" type="text/css" href="slides/summary/summary.css">-->
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/reveal/lib/css/zenburn.css">
@@ -51,15 +58,35 @@
 
 	<body ng-app="fireworks">
 		
-		<div fireworks="storyboard.json">
+		<div fireworks="start transitions inline diabetes_atlas moa risk_management investments summary" transition="linear">
+		<!-- <div fireworks="storyboard.json" transition="linear"> -->
 			
 			<nav fw-menu id="menu">
 			</nav>
 		
 			<!-- Any section element inside of this container is displayed as a slide -->
-			<div fw-slides previewLinks="true">
+			<div fw-slides previewLinks="true" class="slides">
 				
 				<!-- <section fw-template="heads-up.html"></section> -->
+				<section id="inline">
+					<h1>Combine external and inline slides!</h1>
+					<p>This slide was defined directly in index.html while all the other slides are loaded from external files</p>
+				</section>
+				
+				<section id="transitions">
+					<h2>Transition Styles</h2>
+					<p>
+						You can select from different transitions, like: <br>
+						<a href="?transition=cube#/transitions">Cube</a> -
+						<a href="?transition=page#/transitions">Page</a> -
+						<a href="?transition=concave#/transitions">Concave</a> -
+						<a href="?transition=zoom#/transitions">Zoom</a> -
+						<a href="?transition=linear#/transitions">Linear</a> -
+						<a href="?transition=fade#/transitions">Fade</a> -
+						<a href="?transition=none#/transitions">None</a> -
+						<a href="?#/transitions">Default</a>
+					</p>
+				</section>
 		
 			</div>
 			
@@ -79,16 +106,14 @@
 
 		<script src="lib/angularjs/angular.min.js"></script>
 		<script src="lib/angularjs/angular-touch.min.js"></script>
-		<script src="lib/reveal/lib/js/head.min.js"></script>
+		<script src="js/fireworks.js"></script>
 		<!--<script src="lib/reveal/js/reveal.js"></script>-->
 		<script src="lib/draggy.js"></script>
 		<script src="lib/touchy.js"></script>
 
-		<script src="js/fireworks.js"></script>
-		<script src="slides/start/start.js"></script>
-		<script src="slides/intro/intro.js"></script>
-		<script src="slides/diabetes_patients/nr-of-patients.js"></script>
+		<!--<script src="slides/start/start.js"></script>
 		<script src="slides/diabetes_atlas/diabetes_atlas.js"></script>
+		<script src="slides/moa/moa.js"></script>-->
 
 		<script>
 			

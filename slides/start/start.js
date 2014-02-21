@@ -1,4 +1,4 @@
-angular.module('fireworks').directive("epidemicGraph", function() {
+fw.register("epidemicGraph", function() {
 
   var clickCounter = 0, countUpInterval;
 
@@ -49,7 +49,9 @@ angular.module('fireworks').directive("epidemicGraph", function() {
       scope.$on('exit:start', function() {
         console.log(':: Exiting start');
         onExit();
-      })
+      });
+      
+      scope.$on('$destroy', function() {console.log('Destroyed start')});
       
     }
   }

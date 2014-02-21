@@ -1,4 +1,4 @@
-fw.directive("diabetesAtlas", function(list) {
+fw.register("diabetesAtlas", function(list) {
 
 	return {
 		link: function linkFn (scope, el, attrs) {

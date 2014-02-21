@@ -1,4 +1,4 @@
-fw.directive("nrOfPatients", function(list) {
+fw.register("nrOfPatients", function(list) {
 
 	return {
 		// templateUrl: 'slides/templates/start.html',

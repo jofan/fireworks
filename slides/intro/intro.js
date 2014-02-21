@@ -1,5 +1,5 @@
 
-fw.directive('intro', function(list) {
+fw.register('intro', function(list) {
     return {
       // templateUrl: 'slides/templates/intro.html',
       // replace:true,

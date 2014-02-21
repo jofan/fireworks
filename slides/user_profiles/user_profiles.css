@@ -1,0 +1,40 @@
+#user_profiles .case{
+	margin: 12px 0 0 62px;
+	background: url(../../content/img/impact_f2_1/cases.png) right top no-repeat;
+	width: 1054px;
+	height: 647px;
+	display: none;
+	padding: 115px 0 0;
+}
+#user_profiles .case:nth-child(2){
+	background-position: right -778px;
+}
+#user_profiles .case:nth-child(3){
+	background-position: right -1557px;
+}
+#user_profiles .case:nth-child(4){
+	background-position: right -2362px;
+}
+#user_profiles.state1 .case:nth-child(1),
+#user_profiles.state2 .case:nth-child(2),
+#user_profiles.state3 .case:nth-child(3),
+#user_profiles.state4 .case:nth-child(4){
+	display: block;
+}
+#user_profiles .case h1{
+	margin: 0 0 35px;
+}
+#user_profiles .case h2{
+	font: 24px MetaPlusNormalRoman;
+}
+#user_profiles h3{
+	color: #d94d4c;
+	margin-top: 37px;
+	font: 24px MetaPlusNormalRoman;
+}
+#user_profiles li{
+	font: 18px MetaPlusNormalRoman;
+	padding-left: 25px;
+	margin-top: 12px;
+	background: url(../../content/img/impact_f2_1/check.png) 1px 4px no-repeat;
+}

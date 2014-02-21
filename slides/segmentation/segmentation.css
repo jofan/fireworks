@@ -1,0 +1,22 @@
+#segmentation{
+	background: url(assets/slide-bg.png) 100% 100% no-repeat;
+	min-height: 700px;
+}
+#segmentation nav{
+	display: -webkit-box;
+	-webkit-box-pack: justify;
+	margin: 20px 64px 0 64px;
+}
+#segmentation nav button{
+	display: block;
+	text-align: center;
+	background-image: -webkit-linear-gradient(bottom, #489FCA 0%, #81CBF3 100%);
+	width: 256px;
+	height: 80px;
+	border: 1px solid #369cd1;
+	border-radius: 4px;
+	-webkit-box-shadow: -2px 4px 5px rgba(0, 0, 0, .24), inset 1px 1px rgba(255, 255, 255, .24);
+	font: 24px MetaPlusNormalRoman;
+	color: #fff;
+	text-shadow: 0 -1px rgba(0, 0, 0, .32);
+}
