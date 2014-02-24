@@ -17,12 +17,21 @@
 				"scripts": ["slides/intro/intro.js"]
 			}
 		},
+		"diabetes_atlas": {
+			"id": "diabetes_atlas",
+			"name": "Diabetes in the world",
+			"files": {
+				"templates": ["slides/diabetes_atlas/diabetes_atlas.html"],
+				"scripts": ["slides/diabetes_atlas/diabetes_atlas.js"],
+				"styles": ["slides/diabetes_atlas/diabetes_atlas.css"]
+			}
+		},
 		"diabetes_patients": {
 			"id": "diabetes_patients",
 			"name": "How many patients with diabetes?",
 			"files": {
-				"templates": ["slides/diabetes_patients.html"],
-				"scripts": ["slides/diabetes_patients/di.js"],
+				"templates": ["slides/diabetes_patients/diabetes_patients.html"],
+				"scripts": ["slides/diabetes_patients/nr-of-patients.js"],
 				"styles": ["slides/diabetes_patients/nr-of-patients.css"]
 			}
 		},
@@ -41,6 +50,11 @@
 			"id": "remepan",
 			"name": "Remepan presentation",
 			"content": ["start", "segmentation", "diabetes_atlas", "diabetes_patients", "moa", "investments", "risk_management", "diabetes_atlas", "summary"]
+		},
+		"no-js": {
+			"id": "no-js",
+			"name": "Just HTML slides",
+			"content": ["inline", "transitions", "investments", "risk_management"]	
 		},
 		"intro": {
 			"id": "intro",

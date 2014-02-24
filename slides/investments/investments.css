@@ -101,6 +101,7 @@
 	color: white;
 	z-index: 2;
 	-webkit-transform: translate3d(0,0,0);
+	margin-bottom: 6px;
 }
 #investments .bar .number{
 	font: 32px/32px MetaPlusCapsBold;

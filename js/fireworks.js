@@ -42,7 +42,7 @@ function getAbsoluteHeight( element ) {
 
 }
 
-var fw = angular.module('fireworks', ['ngTouch'])
+var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
   .config(function($locationProvider, $controllerProvider, $compileProvider, $filterProvider, $provide)
   {
       // We need to reference this for lazy loading
@@ -356,6 +356,7 @@ var fw = angular.module('fireworks', ['ngTouch'])
             el[0].appendChild(newSlide);
             $compile(newSlide)(scope);
             slidesInDOM.push(slide);  
+            newSlide = null;
         }
         
         // See if there are any CSS or JS dependecies and load those first
@@ -365,7 +366,7 @@ var fw = angular.module('fireworks', ['ngTouch'])
             var pathToFiles = scope.pathToSlides.replace(/<id>/g, slide);
             // If model.type is 'component', look up component.json file once and create model.slides from that
             // If model.slides is defined, then dependencies are expected to be defined per slide
-            if (scope.model.slides) {
+            if (scope.model.slides && scope.model.slides[slide]) {
                 var data = scope.model.slides[slide] || {};
                 if (data.files) {
                     data.files.scripts = data.files.scripts || [];
@@ -432,6 +433,7 @@ var fw = angular.module('fireworks', ['ngTouch'])
             // with nested transforms
             if( typeof el[0].style.zoom !== 'undefined' && !navigator.userAgent.match( /(iphone|ipod|ipad|android)/gi ) ) {
                 el[0].style.zoom = scale;
+                $rootScope.$broadcast('layout:scale', scale);
             }
             // Apply scale transform as a fallback
             else {
@@ -489,6 +491,7 @@ var fw = angular.module('fireworks', ['ngTouch'])
             if (template === scope.fw.current) {
                 scope.$emit('enter:' + scope.fw.current);
             }
+            slide = null;
         }
         
         function removeTemplate () {
@@ -499,15 +502,17 @@ var fw = angular.module('fireworks', ['ngTouch'])
                 // cIndex = 5 -> hIndex = 3, hIndex = 7
                 if (hIndex < (cIndex.h - 2) || hIndex > (cIndex.h + 2)) {
                 // if (cIndex.h !== hIndex && (hIndex - 1) !== cIndex.h && (hIndex + 1) !== cIndex.h) {
+                    $timeout.cancel(timeToRemove);
                     scope.$destroy();
                     el.remove();
                     $rootScope.$broadcast('remove:slide', template);
                 }
                 else {
+                    $timeout.cancel(timeToRemove);
                     timeToRemove = null;
                 }
                 // TODO: add check for verticals if current and this index is same
-            },10000); // TODO: change to about 1 minute
+            },30000); // TODO: change to about 1 minute
         }
         
         function updateSlide (index) {
@@ -549,8 +554,11 @@ var fw = angular.module('fireworks', ['ngTouch'])
             }
         }
         
+        scope.$on('$destroy', function() {
+           $timeout.cancel(timeToRemove); 
+        });
+        
         scope.$on('slidechange', function(event, index) {
-          // Change class if necessary
           updateSlide(index);
         });
         
@@ -585,7 +593,6 @@ var fw = angular.module('fireworks', ['ngTouch'])
               }
               
               scope.$on('slidechange', function(event, index) {
-                // Change class if necessary
                 updateProgress(index);
               });
               
@@ -597,7 +604,12 @@ var fw = angular.module('fireworks', ['ngTouch'])
   // Copying the Reveal.js controls functionality
   .directive('fwControls', function($rootScope, list) {
       return {
-          templateUrl: 'controls.html',
+          template: '<aside class="controls" style="display: block;">' +
+                        '<div class="navigate-left" ng-click="fw.prev()"></div>' +
+                        '<div class="navigate-right" ng-click="fw.next()"></div>' +
+                        '<div class="navigate-up" ng-click="fw.up()"></div>' + 
+                        '<div class="navigate-down" ng-click="fw.down()"></div>' + 
+                    '</aside>',
           replace: true,
           link: function linkFn(scope, el, attrs) {
               var leftArrow = el.find('div').eq(0);
