@@ -115,6 +115,14 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
                   }
                   
                   if (chapter) {
+                      if (chapter === 'slide') {
+                          if ($scope.model.slides[slide]) {
+                             list.setList([slide]);
+                             list.goTo(slide);
+                             $scope.fw.previous = previous;
+                             $scope.fw.current = slide;
+                          }
+                      }
                       if ($scope.model.structures[chapter]) {
                           list.setList($scope.model.structures[chapter].content);
                       }
@@ -364,6 +372,7 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
             var slideData = null;
             var files = [];
             var pathToFiles = scope.pathToSlides.replace(/<id>/g, slide);
+            // Do we have a slide id or path to template?
             // If model.type is 'component', look up component.json file once and create model.slides from that
             // If model.slides is defined, then dependencies are expected to be defined per slide
             if (scope.model.slides && scope.model.slides[slide]) {
@@ -373,9 +382,14 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
                     data.files.styles = data.files.styles || [];
                     files = files.concat(data.files.scripts);
                     files = files.concat(data.files.styles);
-                    head.load(files, function() {
-                       createElement(slide, i); 
-                    });
+                    if (files.length > 0) {
+                      head.load(files, function() {
+                         createElement(slide, i); 
+                      });
+                    }
+                    else {
+                      createElement(slide, i);
+                    }
                 }
                 else {
                     createElement(slide, i); 
@@ -456,7 +470,20 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
         var classes = [].slice.call(el[0].classList);
         var slideIndex;
         var timeToRemove = null;
+        console.log(scope.pathToSlides);
         var html = $templateCache.get('slides/' + template + '/' + template + '.html');
+        // If a path have been provided, get info 0: file name, 1: file name w/o extension, 2: file extension
+        var pathInfo = template.match(/([^\/]+)(?=\.\w+$)[\.]([0-9A-Za-z_-]{1,4})$/);
+        
+        // If the template is a file and not an id (e.g. 'img/splash.png')
+        // then just set a new property and a default directive will take care of it
+        // Supported: Image: fw-image, Video: fw-video, PDF: fw-doc
+        if (pathInfo) {
+            
+        }
+        else {
+            templatePath = scope.pathToSlides.replace(/<id>/g, template) + 
+        }
         
         if (slideIndexRaw) {
             slideIndexRaw = slideIndexRaw.split(' ');
@@ -564,6 +591,18 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
         
       }
     }
+  })
+
+  // Default display of images
+  .directive('fwImage', function() {
+      return {
+          template: '<section><img ng-source="imgSrc" /></section>',
+          link: function linkFn(scope, el, attrs) {
+              var src = attrs.fwImage;
+              scope.imgSrc = src;
+              console.log(src);
+          }
+      }
   })
   
   // Copying the Reveal.js progress functionality
@@ -1068,3 +1107,10 @@ fw.ready = function(fn) {
 }
 
 fw.register = fw.register || fw.directive;
+
+fw.update = function(path) {
+    // var scope = angular.element('#fireworks').scope();
+    // scope.$apply(function() {
+       window.location.hash = path;
+    // });
+}
