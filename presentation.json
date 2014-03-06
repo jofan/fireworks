@@ -49,7 +49,7 @@
 		"remepan": {
 			"id": "remepan",
 			"name": "Remepan presentation",
-			"content": ["start", "segmentation", "diabetes_atlas", "diabetes_patients", "moa", "investments", "risk_management", "diabetes_atlas", "summary"]
+			"content": ["start", "segmentation", "img/mobilizer-mockup.png", "docs/demo.pdf", "http://agnitio.com", "diabetes_atlas", "diabetes_patients", "moa", "investments", "risk_management", "diabetes_atlas", "inline", "summary"]
 		},
 		"no-js": {
 			"id": "no-js",
