@@ -64,7 +64,7 @@ angular.module('ngDraggy', [])
 		}
 		
 		return {
-			// scope: {},
+			// scope: true,
 			link: function linkFn($scope, $el, attrs) {
 				// config from attributes
 				var id = attrs.draggy || $el.id || null;
@@ -111,7 +111,10 @@ angular.module('ngDraggy', [])
 				  $el.on(events.start, start);
 				}
 				
-				$scope.$on("$destroy", disable);
+				$scope.$on("$destroy", function() {
+				  disable();
+				  $el.remove();
+				});
 				
 				function start(event) {
 					event.stopPropagation();

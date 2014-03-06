@@ -1,0 +1,23 @@
+#blue_urine {
+	min-height: 695px;
+}
+.urine-text {
+	color: #5A5A5A;
+	font-size: 12px;
+	width: 190px;
+	position: absolute;
+	left: 522px;
+	top: 443px;
+	display: none;
+}
+
+
+.brand-blue {
+	color:#2ca0da;
+}
+
+@media all and (orientation:portrait) {
+	.urine-text {
+		display: block;
+	}
+}

@@ -1,5 +1,5 @@
 {
-	"slides": {
+	"components": {
 		"start": {
 			"id": "start",
 			"name": "21st Century Epidemic",
@@ -29,10 +29,12 @@
 		"diabetes_patients": {
 			"id": "diabetes_patients",
 			"name": "How many patients with diabetes?",
+			"dependencies": [
+				"nr-of-patients"
+			],
 			"files": {
 				"templates": ["slides/diabetes_patients/diabetes_patients.html"],
-				"scripts": ["slides/diabetes_patients/nr-of-patients.js"],
-				"styles": ["slides/diabetes_patients/nr-of-patients.css"]
+				"styles": ["slides/diabetes_patients/diabetes_patients.css"]
 			}
 		},
 		"moa": {
@@ -43,13 +45,32 @@
 				"scripts": ["slides/moa/moa.js"],
 				"styles": ["slides/moa/moa.css"]
 			}
+		},
+		"draggy": {
+			"id": "draggy",
+			"name": "Draggy library",
+			"files": {
+				"scripts": ["js/draggy.js"]
+			}
+		},
+		"nr-of-patients": {
+			"id": "nr-of-patients",
+			"name": "Number of patients widget",
+			"dependencies": [
+				"draggy"
+			],
+			"files": {
+				"templates": ["widgets/nr-of-patients/nr-of-patients.html"],
+				"scripts": ["widgets/nr-of-patients/nr-of-patients.js"],
+				"styles": ["widgets/nr-of-patients/nr-of-patients.css"]
+			}
 		}
 	},
 	"structures": {
 		"remepan": {
 			"id": "remepan",
 			"name": "Remepan presentation",
-			"content": ["start", "segmentation", "img/mobilizer-mockup.png", "docs/demo.pdf", "http://agnitio.com", "diabetes_atlas", "diabetes_patients", "moa", "investments", "risk_management", "diabetes_atlas", "inline", "summary"]
+			"content": ["start", "segmentation", "/docs/demo.pdf", "diabetes_atlas", "diabetes_patients", "moa", "investments", ["risk_management", "/img/mobilizer-mockup.png", "diabetes_atlas"], "summary"]
 		},
 		"no-js": {
 			"id": "no-js",
@@ -62,5 +83,6 @@
 			"content": ["intro", "heads-up"]
 		}
 	},
-	"storyboard": ["remepan"]
+	"storyboard": ["remepan"],
+	"plugins": []
 }

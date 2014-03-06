@@ -1,8 +1,9 @@
 fw.register("nrOfPatients", function(list) {
 
 	return {
-		// templateUrl: 'slides/templates/start.html',
-		// replace: true,
+		templateUrl: 'widgets/nr-of-patients/nr-of-patients.html',
+		replace: true,
+		scope: true,
 		link: function linkFn (scope, el, attrs) {
 		  	var allMen = el[0].querySelectorAll('.cont-range div');
 		  	var number = el[0].querySelector('.percentage-number');
@@ -56,15 +57,16 @@ fw.register("nrOfPatients", function(list) {
 			scope.$on('$destroy', function() {
 				allMen = null;
 				number = null;
+				// el.remove();
 				console.log("Removing diabetes_patients DOM");
 			})
 			
-		  	scope.$on('enter:diabetes_patients', function() {
-			  	console.log(':: Entering: blue_urine'); 
+		  	scope.$on('enter:' + el.id, function() {
+			  	console.log(':: Entering: nr_of_patients'); 
 			});
 			
-			scope.$on('exit:diabetes_patients', function() {
-			  	console.log(':: Exiting: blue_urine'); 
+			scope.$on('exit:' + el.id, function() {
+			  	console.log(':: Exiting: nr_of_patients'); 
 			});
 		 }
 	}
