@@ -70,12 +70,12 @@
 		"remepan": {
 			"id": "remepan",
 			"name": "Remepan presentation",
-			"content": ["start", "segmentation", "/docs/demo.pdf", "diabetes_atlas", "diabetes_patients", "moa", "investments", ["risk_management", "/img/mobilizer-mockup.png", "diabetes_atlas"], "summary"]
+			"content": ["start", "segmentation", "/docs/demo.pdf", "diabetes_atlas", "diabetes_patients", "moa", "investments", ["risk_management", "/img/mobilizer-mockup.png", "diabetes_atlas"], "summary", "no-js", "non-existant"]
 		},
 		"no-js": {
 			"id": "no-js",
 			"name": "Just HTML slides",
-			"content": ["inline", "transitions", "investments", "risk_management"]	
+			"content": ["investments", "risk_management", "summary"]	
 		},
 		"intro": {
 			"id": "intro",

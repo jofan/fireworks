@@ -56,7 +56,7 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
   
   .directive('fireworks', function($http, $location, list) {
       return {
-          controller: function($rootScope, $scope, $timeout) {
+          controller: function($document, $rootScope, $scope, $timeout) {
               
               // Could be replaced with a $scope.$watch for 'fw.current'
               function update() {
@@ -75,6 +75,7 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
                   },
                   current: "",
                   previous: "",
+                  isPaused: false,
                   goto: function(slide) {
                       this.previous = list.get();
                       list.goTo(slide);
@@ -116,8 +117,139 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
                       list.down();
                       this.current = list.get();
                       update();
+                  },
+                  first: function() {
+                      this.previous = list.get();
+                      list.gotoFirst();
+                      this.current = list.get();
+                      update();
+                  },
+                  last: function() {
+                      this.previous = list.get();
+                      list.gotoLast();
+                      this.current = list.get();
+                      update();
+                  },
+                  togglePause: function() {
+                      if( this.isPaused ) {
+                          $rootScope.$broadcast('pause:resume');
+                          this.isPaused = false;
+                      }
+                      else {
+                          $rootScope.$broadcast('pause:enter');
+                          this.isPaused = true;
+                      }
+                  },
+                  fullScreen: function() {
+                      // From RevealJS
+                      var element = document.body;
+                      
+                      // Check which implementation is available
+                      var requestMethod = element.requestFullScreen ||
+                                          element.webkitRequestFullscreen ||
+                                          element.webkitRequestFullScreen ||
+                                          element.mozRequestFullScreen ||
+                                          element.msRequestFullScreen;
+                      
+                      if( requestMethod ) {
+                          requestMethod.apply( element );
+                      }
                   }
               }
+              
+              // Document keypress
+              $document.on('keydown', function(event) {
+                  // From RevealJS
+                  // Check if there's a focused element that could be using
+                  // the keyboard
+                  var activeElement = document.activeElement;
+                  var hasFocus = !!( document.activeElement && ( document.activeElement.type || document.activeElement.href || document.activeElement.contentEditable !== 'inherit' ) );
+                  
+                  // Disregard the event if there's a focused element or a
+                  // keyboard modifier key is present
+                  if( hasFocus || (event.shiftKey && event.keyCode !== 32) || event.altKey || event.ctrlKey || event.metaKey ) return;
+                  
+                  // While paused only allow "unpausing" keyboard events (b and .)
+                  if( $scope.fw.isPaused && [66,190,191].indexOf( event.keyCode ) === -1 ) {
+                      return false;
+                  }
+                  
+                  var triggered = false;
+                  
+                  // // 1. User defined key bindings
+                  // if( typeof config.keyboard === 'object' ) {
+                  // 
+                  //     for( var key in config.keyboard ) {
+                  // 
+                  //         // Check if this binding matches the pressed key
+                  //         if( parseInt( key, 10 ) === event.keyCode ) {
+                  // 
+                  //             var value = config.keyboard[ key ];
+                  // 
+                  //             // Callback function
+                  //             if( typeof value === 'function' ) {
+                  //                 value.apply( null, [ event ] );
+                  //             }
+                  //             // String shortcuts to reveal.js API
+                  //             else if( typeof value === 'string' && typeof Reveal[ value ] === 'function' ) {
+                  //                 Reveal[ value ].call();
+                  //             }
+                  // 
+                  //             triggered = true;
+                  // 
+                  //         }
+                  // 
+                  //     }
+                  // 
+                  // }
+                  
+                  // 2. System defined key bindings
+                  if( triggered === false ) {
+                  
+                      // Assume true and try to prove false
+                      triggered = true;
+                      
+                      $scope.$apply(function() {
+                          switch( event.keyCode ) {
+                              // p, page up
+                              case 80: case 33: $scope.fw.prev(); break;
+                              // n, page down
+                              case 78: case 34: $scope.fw.next(); break;
+                              // h, left
+                              case 72: case 37: $scope.fw.left(); break;
+                              // l, right
+                              case 76: case 39: $scope.fw.right(); break;
+                              // k, up
+                              case 75: case 38: $scope.fw.up(); break;
+                              // j, down
+                              case 74: case 40: $scope.fw.down(); break;
+                              // home
+                              case 36: $scope.fw.first(); break;
+                              // end
+                              case 35: $scope.fw.last(); break;
+                              // space
+                              case 32: event.shiftKey ? $scope.fw.prev() : $scope.fw.next(); break;
+                              // return
+                              // case 13: isOverview() ? deactivateOverview() : triggered = false; break;
+                              // b, period, Logitech presenter tools "black screen" button
+                              case 66: case 190: case 191: $scope.fw.togglePause(); break;
+                              // f
+                              case 70: $scope.fw.fullScreen(); break;
+                              default:
+                                  triggered = false;
+                          }
+                      });
+                  
+                      
+                  
+                  }
+                  
+                  // If the input resulted in a triggered action we should prevent
+                  // the browsers default behavior
+                  if( triggered ) {
+                      event.preventDefault();
+                  }
+              })
               
               // PRIVATE API - only available to directives requiring it
               this.readUrl = function() {
@@ -829,10 +961,11 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
   // Copying the Reveal.js progress functionality
   .directive('fwProgress', function($window, list) {
       return {
-          scope: {},
+          scope: true,
           link: function linkFn(scope, el, attrs) {
               // Add the span element that acts as the indicator bar
               var barEl = angular.element('<span></span>');
+              var parent = el.parent();
               el.append(barEl);
               el.addClass('progress');
               // Using Reveal stylesheet, so make sure it displays
@@ -850,6 +983,19 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
                   else {
                       barEl[0].style.width = $window.innerWidth + 'px';
                   }
+              }
+              
+              // Go to slide when clicking progress bar
+              scope.progressToSlide = function(event) {
+                  event.preventDefault();
+                  
+                  var slidesTotal = list.getList().length;
+                  var slideIndex = Math.floor( ( event.clientX / parent[0].offsetWidth ) * slidesTotal );
+                  var slide = list.get(slideIndex, 0);
+                  
+                  console.log(slide);
+                  
+                  scope.fw.goto(slide);
               }
               
               scope.$on('slidechange', function(event, index) {
@@ -906,6 +1052,23 @@ var fw = angular.module('fireworks', ['ngTouch', 'ngDraggy'])
               }
               scope.$on('slidechange', function(event, index) {
                   updateControls(index);
+              });
+          }
+      }
+  })
+  
+  .directive('fwPause', function($rootScope) {
+      return {
+          scope: true,
+          link: function linkFn(scope, el, attrs) {
+              var parent = el.parent();
+              
+              scope.$on('pause:enter', function() {
+                  parent.addClass('paused');
+              });
+              
+              scope.$on('pause:resume', function() {
+                  parent.removeClass('paused');
               });
           }
       }
